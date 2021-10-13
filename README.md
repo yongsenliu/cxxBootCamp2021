@@ -1,3 +1,3 @@
 # cxxBootCamp2021
-This repo is for store all assignments from C++ Boot Camp 2021 to Github.
+This repo is for storing all assignments from C++ Boot Camp 2021 to Github.
 - Yongsen Liu
