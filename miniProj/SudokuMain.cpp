@@ -202,24 +202,24 @@ public:
 };
 
 
-unique_ptr<Grid> solve(unique_ptr<Grid> S) {
-   if (S == nullptr || S->isSolved()) {
-      return S;
-   }
-   int k = S->leastCount();
-   Possible p = S->possible(k);
-   for (int i = 1; i <= 9; i++) {
-      if (p.isTrue(i)) {
-         unique_ptr<Grid> S1(new Grid(*S));
-         if (S1->assign(k, i)) {
-            if (auto S2 = solve(std::move(S1))) {
-               return S2;
-            }
-         }
-      }
-   }
-   return {};
-}
+// unique_ptr<Grid> solve(unique_ptr<Grid> S) {
+//    if (S == nullptr || S->isSolved()) {
+//       return S;
+//    }
+//    int k = S->leastCount();
+//    Possible p = S->possible(k);
+//    for (int i = 1; i <= 9; i++) {
+//       if (p.isTrue(i)) {
+//          unique_ptr<Grid> S1(new Grid(*S));
+//          if (S1->assign(k, i)) {
+//             if (auto S2 = solve(std::move(S1))) {
+//                return S2;
+//             }
+//          }
+//       }
+//    }
+//    return {};
+// }
 
 //main entry point
 int main() {
