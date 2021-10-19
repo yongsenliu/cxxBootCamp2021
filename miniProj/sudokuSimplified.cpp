@@ -58,9 +58,10 @@ void Possible::eliminate(int i) {
 // Returns an iterator to the first element in the range [first,last) 
 //that compares equal to val. If no such element is found, the function 
 //returns last.
+// iterator is radom accessing
 int Possible::val() const {
-    auto it = find(_boolens.begin(), _boolens.end(), true);
-    return (it != _boolens.end() ? 1 + (it - _boolens.begin()) : -1);
+    auto iterator = find(_boolens.begin(), _boolens.end(), true);
+    return (iterator != _boolens.end() ? (iterator - _boolens.begin()) + 1 : -1);
 };
 
 string Possible::str(int width) const {
@@ -79,14 +80,11 @@ string Possible::str(int width) const {
 *****************************/
 class Grid {
     vector<Possible> _squares;
-    vector<vector<int>> _unit, _peers, _unitsOf;
 
 public:
     Possible possible(int k) const { return _squares[k]; }
     Grid();
-    void init();
     bool isSolved() const;
-    int leastCount() const;
     void print(ostream & s) const;
 
     // eliminate a possible from a square, 'value' is par for eliminating, 
@@ -95,78 +93,9 @@ public:
     bool assign(int k, int value);
 };
 
-// vector<vector<int>> Grid :: _unit(27), _unitsOf(81), _peers(81);
-
-// void Grid::Grid(int **arry) : _squares(81) {
-    //     int k = 0;
-    //     for (int i = 0; i < 9; i++) {
-    //         for (int j = 0; j < 9; j++) {
-    //             if (!assign(k, arry[i][j])) {
-    //                 cerr << "error" << endl;
-    //                 return;
-    //             }
-    //             k++;
-    //         }
-    //         k++;
-    //     }
-    // }
-
-
 /*****************************
 // Implementation of class 'Grid'
 *****************************/
-void Grid::init() {
-    // this->_peers.resize();
-
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 9; j++) {
-            const int k = i*9 + j;
-            const int x[3] = {i, 9 + j, 18 + (i/3)*3 + j/3};
-            for (int g = 0; g < 3; g++) {
-                auto & refvec = _unit[x[g]];
-                refvec.push_back(k);
-                _unitsOf[k].push_back(x[g]);
-            }
-        }
-    }
-
-    for (int k = 0; k < _peers.size(); k++) {
-        for (int x = 0; x < _unitsOf[k].size(); x++) {
-            for (int j = 0; j < 9; j++) {
-                int k2 = _unit[_unitsOf[k][x]][j];
-                if (k2 != k) _peers[k].push_back(k2);
-            }
-        }
-    }
-};
-/*
-void Grid::init() {
-    // this->_peers.resize();
-    //vector<Possible> _squares(81);
-    //vector<vector<int>> _unit(27), _unitsOf(81), _peers(81);
-
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 9; j++) {
-            const int k = i*9 + j;
-            const int x[3] = {i, 9 + j, 18 + (i/3)*3 + j/3};
-            for (int g = 0; g < 3; g++) {
-                auto & refvec = _unit[x[g]];
-                refvec.push_back(k);
-                _unitsOf[k].push_back(x[g]);
-            }
-        }
-    }
-
-    for (int k = 0; k < _peers.size(); k++) {
-        for (int x = 0; x < _unitsOf[k].size(); x++) {
-            for (int j = 0; j < 9; j++) {
-                int k2 = _unit[_unitsOf[k][x]][j];
-                if (k2 != k) _peers[k].push_back(k2);
-            }
-        }
-    }
-};
-*/
 
 bool Grid::isSolved() const {
     for (int k = 0; k < _squares.size(); k++) {
@@ -175,20 +104,6 @@ bool Grid::isSolved() const {
         }
     }
     return true;
-};
-
-
-int Grid::leastCount() const {
-    int k = -1;
-    int min;
-    for (int i = 0; i< _squares.size(); i++) {
-        int m = _squares[i].countTrue();
-        if (m > 1 && (k == -1 || m < min)) {
-            min = m;
-            k = i;
-        }
-    }
-    return k;
 };
 
 void Grid::print(ostream & s) const{
@@ -222,35 +137,54 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
     // if no possibles exist in index k, it means no solution, return 'false' to the function
     if (_squares[k].countTrue() == 0) {
         return false;
-    } else if (_squares[k].countTrue() == 1) {// only one possible value
+    } else if (_squares[k].countTrue() == 1) {// if only one possible value
+        // apply the principle 1 to eliminate this 'true' value from all peers
+        int value = _squares[k].val();
 
-        int v = _squares[k].val();
-        for (int i = 0; i < _peers[k].size(); i++) {
-            if (!eliminatePossibleFromSquare(_peers[k][i], v)) {
-                return false;
+        for (int i = 0; i < 9; i++) {
+            if ((i == k%9)||(i == k/9)) {
+                if (!eliminatePossibleFromSquare(i, value)) {
+                    return false;
+                }
             }
         }
+
+
+        // for (int col = 0; col < 9; col++) {
+        //     for (int row = 0; row < 9; row++) {
+
+        //         if ((col == k%9)||(row == k/9) {
+
+        //         }
+        //         if (!eliminatePossibleFromSquare())
+        //     }
+        // }
+
+        // for (int i = 0; i < 20; i++) {
+        //     if (!eliminatePossibleFromSquare(i, value)) {
+        //         return false;
+        //     }
+        // }
     }
+    // for (int i = 0; i < _unitsOf[k].size(); i++) {
+    //     int x = _unitsOf[k][i];
+    //     int n = 0, ks;
+    //     for (int j = 0; j < 9; j++) {
+    //         int p = _unit[k][i];
+    //         if (_squares[p].isTrue(value)) {
+    //             n++;
+    //             ks = p;
+    //         }
+    //     }
 
-    for (int i = 0; i < _unitsOf[k].size(); i++) {
-        int x = _unitsOf[k][i];
-        int n = 0, ks;
-        for (int j = 0; j < 9; j++) {
-            int p = _unit[k][i];
-            if (_squares[p].isTrue(value)) {
-                n++;
-                ks = p;
-            }
-        }
-
-        if (n == 0) {
-            return false;
-        } else if (n == 1) {
-            if (!assign(ks, value)) {
-                return false;
-            }
-        }
-    }
+    //     if (n == 0) {
+    //         return false;
+    //     } else if (n == 1) {
+    //         if (!assign(ks, value)) {
+    //             return false;
+    //         }
+    //     }
+    // }
     return true;
 };
 
@@ -265,21 +199,7 @@ bool Grid::assign(int k, int value) {
     return true;
 };
 
-// Grid::Grid() : _squares(81) {
-//     vector<vector<int>> _unit(27), _unitsOf(81), _peers(81);
-//     for (int i = 0; i < 81; i++) {
-//         if (!assign(i, 0)) {
-//             cerr << "error" << endl;
-//             return;
-//         }
-//     }
-// };
-
 Grid::Grid() : _squares(81) {
-    _unit = vector<vector<int>>(27,vector<int>());
-    _unitsOf = vector<vector<int>>(81, vector<int>());
-    _peers = vector<vector<int>>(81, vector<int>());
-    init();
     int k = 0;
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
@@ -292,30 +212,10 @@ Grid::Grid() : _squares(81) {
     }
 };
 
-// unique_ptr<Grid> solve(unique_ptr<Grid> S) {
-//    if (S == nullptr || S->isSolved()) {
-//       return S;
-//    }
-//    int k = S->leastCount();
-//    Possible p = S->possible(k);
-//    for (int i = 1; i <= 9; i++) {
-//       if (p.isTrue(i)) {
-//          unique_ptr<Grid> S1(new Grid(*S));
-//          if (S1->assign(k, i)) {
-//             if (auto S2 = solve(std::move(S1))) {
-//                return S2;
-//             }
-//          }
-//       }
-//    }
-//    return {};
-// }
-
 
 /*****************
 //main entry point
 *****************/
-
 int main() {
     std::cout << "---------------" << std::endl;
     Grid grid;
@@ -323,8 +223,8 @@ int main() {
     for (int i = 1; i <= 9; i++) {
         for (int j = 1; j <= 9; j++) {
             grid.print(cout);
-            int k = sudoku[i][j];
-            grid.eliminatePossibleFromSquare(i*j, k);
+            int v = sudoku[i][j];
+            grid.eliminatePossibleFromSquare(i*j, v);
             grid.print(cout);
         }
     }
