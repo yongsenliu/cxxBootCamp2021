@@ -162,7 +162,6 @@ int Grid::leastCount() const {
 };
 
 void Grid::print(ostream & s) const{
-    //s << "ytr";
     int width = 1;
     for (int k = 0; k < _squares.size(); k++) {
         width = max(width, 1 + _squares[k].countTrue());
@@ -182,10 +181,7 @@ void Grid::print(ostream & s) const{
 };
 
 bool Grid::eliminatePossibleFromSquare (int k, int value) {
-    int x = 2;
     if (!_squares[k].isTrue(value)) {
-        int x;
-        x = 1;
         return true;
     }
 
