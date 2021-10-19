@@ -6,6 +6,7 @@
 #define N 9
 using namespace std;
 
+// 2 dimentional array for passing numbers to sovler one by one
 int sudoku[N][N] = {
    {3, 1, 0, 5, 0, 8, 3, 0, 2},
    {5, 0, 5, 0, 0, 0, 0, 0, 0},
@@ -20,8 +21,10 @@ int sudoku[N][N] = {
 
 //class for possibles in a square
 class Possible {
+    // Create an array of 9 for boolens 
     vector<bool> _boolens;
 public:
+
     Possible() : _boolens(9, true) {}
     int countTrue() {
         //FIXME....
@@ -29,21 +32,21 @@ public:
     }
 
 //get boolen value
-    bool isTrue(int i) {
-        return _boolens[i];
+    bool isTrue(int i) const {
+        return _boolens[i-1];
     }
 
 //eliminate one possilbe by setting false
     void eliminate(int i) {
-        _boolens[i] = false; 
+        _boolens[i-1] = false; 
     }
 
-    int val() {
+    int val() const {
       auto it = find(_boolens.begin(), _boolens.end(), true);
       return (it != _boolens.end() ? 1 + (it - _boolens.begin()) : -1);
    }
 
-   string str(int width) {
+   string str(int width) const {
        string s(width, ' ');
         int k = 0;
         for (int i = 1; i <= 9; i++) {
@@ -58,21 +61,19 @@ public:
 //class for a Sudoku grid
 class Grid {
     vector<Possible> _squares;
-    
-    vector<vector<int>> _unit;
-    vector<vector<int>> _peers;
-    vector<vector<int>> _unitsOf;
+    static vector<vector<int>> _unit;
+    static vector<vector<int>> _peers;
+    static vector<vector<int>> _unitsOf;
 
 public:
     Possible possible(int k) const { return _squares[k]; }
 
 //constructor
     Grid() {
-        //this->_peers.resize();
-
+        // this->_peers.resize();
+        vector<vector<int>> _unit(27), _unitsOf(81), _peers(81);
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                _squares[(i+1)*(j+1)] = possible((i+1)*(j+1));
                 const int k = i*9 + j;
                 const int x[3] = {i, 9 + j, 18 + (i/3)*3 + j/3};
                 for (int g = 0; g < 3; g++) {
@@ -81,6 +82,7 @@ public:
                 }
             }
         }
+
         for (int k = 0; k < _peers.size(); k++) {
             for (int x = 0; x < _unitsOf[k].size(); x++) {
                 for (int j = 0; j < 9; j++) {
@@ -91,19 +93,19 @@ public:
         }
     };
 
-    Grid(int **arry) : _squares(81) {
-        int k = 0;
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (!assign(k, arry[i][j])) {
-                    cerr << "error" << endl;
-                    return;
-                }
-                k++;
-            }
-            k++;
-        }
-    }
+    // Grid(int **arry) : _squares(81) {
+    //     int k = 0;
+    //     for (int i = 0; i < 9; i++) {
+    //         for (int j = 0; j < 9; j++) {
+    //             if (!assign(k, arry[i][j])) {
+    //                 cerr << "error" << endl;
+    //                 return;
+    //             }
+    //             k++;
+    //         }
+    //         k++;
+    //     }
+    // }
 
     bool isSolved() {
         for (int k = 0; k < _squares.size(); k++) {
@@ -223,21 +225,13 @@ public:
 
 //main entry point
 int main() {
-    std::cout << "---------------" << std::endl;
+    // std::cout << "---------------" << std::endl;
+
     Grid grid;// = new Grid;
     
     for (int i = 1; i <= 9; i++) {
         for (int j = 1; j <= 9; j++) {
-            // int num = sudoku[i][j];
 
-
-
-            // if (auto S = solve(unique_ptr<Grid>(new Grid(sudoku)))) {
-            //     S->print(cout);
-            // } else {
-            //     cout << "No solution";
-            // }
-            // cout << endl;
             int k = sudoku[i][j];
             grid.eliminatePossibleFromSquare(i*j, k);
             grid.print(cout);
