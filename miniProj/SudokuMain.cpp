@@ -55,6 +55,9 @@ void Possible::eliminate(int i) {
     _boolens[i-1] = false; 
 };
 
+// Returns an iterator to the first element in the range [first,last) 
+//that compares equal to val. If no such element is found, the function 
+//returns last.
 int Possible::val() const {
     auto it = find(_boolens.begin(), _boolens.end(), true);
     return (it != _boolens.end() ? 1 + (it - _boolens.begin()) : -1);
@@ -65,7 +68,7 @@ string Possible::str(int width) const {
     int k = 0;
     for (int i = 1; i <= 9; i++) {
         if (isTrue(i)) {
-            s[k++] = '0' + 1;
+            s[k++] = '0' + i;
         }
     }
     return s;
@@ -181,15 +184,19 @@ void Grid::print(ostream & s) const{
 };
 
 bool Grid::eliminatePossibleFromSquare (int k, int value) {
+    // if the value has already been eliminated, return true i.e. successful.
     if (!_squares[k].isTrue(value)) {
         return true;
     }
 
+    // set possible for index k as 'false' for the value 
     _squares[k].eliminate(value);
 
+    // if no possibles exist in index k, it means no solution, return 'false' to the function
     if (_squares[k].countTrue() == 0) {
         return false;
-    } else if (_squares[k].countTrue() == 1) {
+    } else if (_squares[k].countTrue() == 1) {// only one possible value
+
         int v = _squares[k].val();
         for (int i = 0; i < _peers[k].size(); i++) {
             if (!eliminatePossibleFromSquare(_peers[k][i], v)) {
@@ -242,14 +249,10 @@ bool Grid::assign(int k, int value) {
 // };
 
 Grid::Grid() : _squares(81) {
-    _unit = std::vector<std::vector<int>>(27,std::vector<int>());
-    _unitsOf = std::vector<std::vector<int>>(81,std::vector<int>());
-    _peers = std::vector<std::vector<int>>(81,std::vector<int>());
-    // std::cout << _unit.size() << '\n';
-    // std::cout << _unit[0].size() << '\n';
+    _unit = vector<vector<int>>(27,vector<int>());
+    _unitsOf = vector<vector<int>>(81, vector<int>());
+    _peers = vector<vector<int>>(81, vector<int>());
     init();
-    // std::cout << _unitsOf.size() << '\n';
-    // std::cout << _unitsOf[0].size() << '\n';
     int k = 0;
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
@@ -288,15 +291,8 @@ Grid::Grid() : _squares(81) {
 
 int main() {
     std::cout << "---------------" << std::endl;
-
     Grid grid;
 
-    // grid.init();
-    // Grid *grid = new Grid;
-    // grid->init();
-
-    //grid.init();
-    
     for (int i = 1; i <= 9; i++) {
         for (int j = 1; j <= 9; j++) {
             grid.print(cout);
@@ -305,8 +301,6 @@ int main() {
             grid.print(cout);
         }
     }
-
-    // delete grid;
 
     std::cout << "++++++++++++++++++" << std::endl;
     return 0;
