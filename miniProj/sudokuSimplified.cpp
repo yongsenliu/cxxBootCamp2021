@@ -142,12 +142,27 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
         int value = _squares[k].val();
 
         for (int i = 0; i < 9; i++) {
-            if ((i == k%9)||(i == k/9)) {
+            if ((i == k % 9)||(i == k / 9)) {
                 if (!eliminatePossibleFromSquare(i, value)) {
                     return false;
                 }
             }
+
+            for (int j = 0; j < 9; j++) {
+                if (((i/3)*3 + j/3) == k) {
+                    if (!eliminatePossibleFromSquare(j, value)) {
+                        return false;
+                    }
+                }
+            }
         }
+
+        // for (int i = 0; i < 9; i++) {
+        //     for (int j = 0; j < 9; j++) {
+        //         if (i)
+        //     }
+        // }
+
 
 
         // for (int col = 0; col < 9; col++) {

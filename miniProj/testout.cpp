@@ -1,28 +1,55 @@
 #include <iostream>
-#include <vector>
-// #include <memory>
-// #include <algorithm>
+#include <iomanip>
+#include <numeric>
+using namespace std;
 
-//using namespace std;
+const int NUMROWS = 3;
+const int NUMCOLS = 3;
+const int NUM = NUMROWS * NUMCOLS;
 
-int main() {
+//======================================================================
 
-    std::vector<std::vector<int>> _group, _groups_of;
+void toRowCol( int n, int &row, int &col )      // convert from 1d index [n] to 2d index [row][col]
+{
+   col = n % NUMCOLS;
+   row = n / NUMCOLS;
+}
 
-    for (int i = 0; i < 9; i++) {
-      for (int j = 0; j < 9; j++) {
-         const int k = i*9 + j;
-         const int x[3] = {i, 9 + j, 18 + (i/3)*3 + j/3};
-         for (int g = 0; g < 3; g++) {
-            _group[x[g]].push_back(k);
-            _groups_of[k].push_back(x[g]);
-            std::cout << _group[x[g]] << std::endl;
-         }
-      }
+//======================================================================
+
+int fromRowCol( int row, int col )              // returns 1d index [n] from 2d index [row][col]
+{
+   return row * NUMCOLS + col;
+}
+
+//======================================================================
+
+int main()
+{
+   int row, col, n;
+   int a[NUM];
+   iota( a, a + NUM, 0 );
+
+   #define SP << ' ' << setw( 4 ) <<
+   #define NL << '\n'
+
+   cout SP "row" SP "col" SP "a[n]" NL;
+   for ( n = 0; n < NUM; n++ ) 
+   {
+      toRowCol( n, row, col );
+      cout SP row SP col SP a[n] NL;
    }
 
-   // std::cout << _group << std::endl;
+   cout NL NL;
 
-   return 0;
-
+   cout << "2d array:\n";
+   for ( row = 0; row < NUMROWS; row++ )
+   {
+      for ( col = 0; col < NUMCOLS; col++ )
+      {
+         n = fromRowCol( row, col );
+         cout SP a[n];
+      }
+      cout NL;
+   }
 }
