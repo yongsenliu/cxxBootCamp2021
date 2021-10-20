@@ -93,9 +93,9 @@ public:
     bool assign(int k, int value);
 };
 
-/*****************************
+/********************************
 // Implementation of class 'Grid'
-*****************************/
+********************************/
 
 bool Grid::isSolved() const {
     for (int k = 0; k < _squares.size(); k++) {
@@ -106,7 +106,7 @@ bool Grid::isSolved() const {
     return true;
 };
 
-void Grid::print(ostream & s) const{
+void Grid::print(ostream & s) const {
     int width = 1;
     for (int k = 0; k < _squares.size(); k++) {
         width = max(width, 1 + _squares[k].countTrue());
@@ -200,16 +200,21 @@ bool Grid::assign(int k, int value) {
 };
 
 Grid::Grid() : _squares(81) {
-    int k = 0;
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 9; j++) {
-            if (!assign(k, sudoku[i][j])) {
-                cerr << "error" << endl;
-                return;
-            }
-            k++;
-        }
+    
+    for (int i = 0; i < 81; i++) {
+        _squares[i] = Possible();
     }
+
+    // int k = 0;
+    // for (int i = 0; i < 9; i++) {
+    //     for (int j = 0; j < 9; j++) {
+    //         if (!assign(k, sudoku[i][j])) {
+    //             cerr << "error" << endl;
+    //             return;
+    //         }
+    //         k++;
+    //     }
+    // }
 };
 
 
@@ -220,12 +225,17 @@ int main() {
     std::cout << "---------------" << std::endl;
     Grid grid;
 
-    for (int i = 1; i <= 9; i++) {
-        for (int j = 1; j <= 9; j++) {
-            grid.print(cout);
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            //grid.print(cout);
             int v = sudoku[i][j];
-            grid.eliminatePossibleFromSquare(i*j, v);
-            grid.print(cout);
+            if (v != 0) {
+                grid.assign(9*i+j, v);
+                //grid.eliminatePossibleFromSquare(9*i + j, v);
+                grid.print(cout);
+            }
+            
+            std::cout << "\n" << "----------------------------------------------------------------------------------------------------"<<"\n" << std::endl;
         }
     }
 
