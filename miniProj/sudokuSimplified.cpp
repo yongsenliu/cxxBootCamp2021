@@ -145,8 +145,8 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
         int value = _squares[k].val();
 
         for (int row = 0; row < 9; row++) {
-
             for (int col = 0; col < 9; col++) {
+                // k%9 is the col and k/9 is the row for the square
                 if ((col == k % 9)||(row == k / 9) || isInBoxOf(row, col, k)) {
                     if (!((9*row+col) == k)) {
                         if (!eliminatePossibleFromSquare(9*row+col, value)) {
@@ -160,6 +160,8 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
     return true;
 };
 
+// this func is to find out if a combination of row&col are in the Box of a square
+// thus peers in the Box can be found out for it
 bool Grid::isInBoxOf(int row, int col, int k) {
     int ri = ((k/9)/3)*3;
     int ci = (k%9)/3;
@@ -182,21 +184,9 @@ bool Grid::assign(int k, int value) {
 };
 
 Grid::Grid() : _squares(81) {
-    
     for (int i = 0; i < 81; i++) {
         _squares[i] = Possible();
     }
-
-    // int k = 0;
-    // for (int i = 0; i < 9; i++) {
-    //     for (int j = 0; j < 9; j++) {
-    //         if (!assign(k, sudoku[i][j])) {
-    //             cerr << "error" << endl;
-    //             return;
-    //         }
-    //         k++;
-    //     }
-    // }
 };
 
 
@@ -204,7 +194,8 @@ Grid::Grid() : _squares(81) {
 //main entry point
 *****************/
 int main() {
-    std::cout << "---------------" << std::endl;
+    std::cout << "-------- START -------" << std::endl;
+
     Grid grid;
 
     for (int row = 0; row < 9; row++) {
@@ -217,7 +208,6 @@ int main() {
             }  
         }
     }
-
-    std::cout << "++++++++++++++++++" << std::endl;
+    std::cout << "-------- END -------" << std::endl;
     return 0;
 }
