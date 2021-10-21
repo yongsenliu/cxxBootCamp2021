@@ -9,7 +9,7 @@ using namespace std;
 // Two dimentional array for passing numbers to sovler one by one
 **************************************************************/
 int sudoku[N][N] = {
-   {3, 1, 0, 5, 0, 8, 3, 0, 2},
+   {3, 6, 0, 5, 0, 8, 0, 0, 2},
    {5, 0, 5, 0, 0, 0, 0, 0, 0},
    {0, 8, 7, 0, 0, 0, 0, 3, 1},
    {0, 0, 3, 0, 1, 0, 0, 8, 0},
@@ -91,11 +91,14 @@ public:
     //'k' is the index
     bool eliminatePossibleFromSquare (int k, int value);
     bool assign(int k, int value);
+    bool isInBoxOf(int row, int col, int k);
 };
 
 /********************************
 // Implementation of class 'Grid'
 ********************************/
+
+
 
 bool Grid::isSolved() const {
     for (int k = 0; k < _squares.size(); k++) {
@@ -141,66 +144,30 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
         // apply the principle 1 to eliminate this 'true' value from all peers
         int value = _squares[k].val();
 
-        for (int i = 0; i < 9; i++) {
-            if ((i == k % 9)||(i == k / 9)) {
-                if (!eliminatePossibleFromSquare(i, value)) {
-                    return false;
-                }
-            }
+        for (int row = 0; row < 9; row++) {
 
-            for (int j = 0; j < 9; j++) {
-                if (((i/3)*3 + j/3) == k) {
-                    if (!eliminatePossibleFromSquare(j, value)) {
-                        return false;
+            for (int col = 0; col < 9; col++) {
+                if ((col == k % 9)||(row == k / 9) || isInBoxOf(row, col, k)) {
+                    if (!((9*row+col) == k)) {
+                        if (!eliminatePossibleFromSquare(9*row+col, value)) {
+                            return false;
+                        }
                     }
                 }
             }
         }
-
-        // for (int i = 0; i < 9; i++) {
-        //     for (int j = 0; j < 9; j++) {
-        //         if (i)
-        //     }
-        // }
-
-
-
-        // for (int col = 0; col < 9; col++) {
-        //     for (int row = 0; row < 9; row++) {
-
-        //         if ((col == k%9)||(row == k/9) {
-
-        //         }
-        //         if (!eliminatePossibleFromSquare())
-        //     }
-        // }
-
-        // for (int i = 0; i < 20; i++) {
-        //     if (!eliminatePossibleFromSquare(i, value)) {
-        //         return false;
-        //     }
-        // }
     }
-    // for (int i = 0; i < _unitsOf[k].size(); i++) {
-    //     int x = _unitsOf[k][i];
-    //     int n = 0, ks;
-    //     for (int j = 0; j < 9; j++) {
-    //         int p = _unit[k][i];
-    //         if (_squares[p].isTrue(value)) {
-    //             n++;
-    //             ks = p;
-    //         }
-    //     }
-
-    //     if (n == 0) {
-    //         return false;
-    //     } else if (n == 1) {
-    //         if (!assign(ks, value)) {
-    //             return false;
-    //         }
-    //     }
-    // }
     return true;
+};
+
+bool Grid::isInBoxOf(int row, int col, int k) {
+    int ri = ((k/9)/3)*3;
+    int ci = (k%9)/3;
+
+    if (((row/3)*3 == ri) && (col/3 == ci)) {
+        return true;
+    }
+    return false;
 };
 
 bool Grid::assign(int k, int value) {
@@ -240,17 +207,14 @@ int main() {
     std::cout << "---------------" << std::endl;
     Grid grid;
 
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 9; j++) {
-            //grid.print(cout);
-            int v = sudoku[i][j];
+    for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+            int v = sudoku[row][col];
             if (v != 0) {
-                grid.assign(9*i+j, v);
-                //grid.eliminatePossibleFromSquare(9*i + j, v);
+                grid.assign(9*row+col, v);
                 grid.print(cout);
-            }
-            
-            std::cout << "\n" << "----------------------------------------------------------------------------------------------------"<<"\n" << std::endl;
+                std::cout << "\n\n" << std::endl;
+            }  
         }
     }
 

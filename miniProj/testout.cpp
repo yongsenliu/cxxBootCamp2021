@@ -3,8 +3,8 @@
 #include <numeric>
 using namespace std;
 
-const int NUMROWS = 3;
-const int NUMCOLS = 3;
+const int NUMROWS = 9;
+const int NUMCOLS = 9;
 const int NUM = NUMROWS * NUMCOLS;
 
 //======================================================================
@@ -52,4 +52,11 @@ int main()
       }
       cout NL;
    }
+
+   cout << "0%9 = " << 0%9 << "; 0/9 = " << 0/9 << endl; 
+   cout << "1%9 = " << 1%9 << "; 1/9 = " << 1/9 << endl;
+   cout << "9%9 = " << 9%9 << "; 9/9 = " << 9/9 << endl;
+   cout << "10%9 = " << 10%9 << "; 10/9 = " << 10/9 << endl;
+   cout << "11%9 = " << 11%9 << "; 11/9 = " << 11/9 << endl;
+   cout << "71%9 = " << 71%9 << "; 71/9 = " << 71/9 << endl; 
 }
