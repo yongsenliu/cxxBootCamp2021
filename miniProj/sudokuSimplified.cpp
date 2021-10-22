@@ -84,6 +84,8 @@ class Grid {
 public:
     Possible possible(int k) const { return _squares[k]; }
     Grid();
+    int leastCount() const;
+    bool bruteForce() const;
     bool isSolved() const;
     void print(ostream & s) const;
 
@@ -98,7 +100,43 @@ public:
 // Implementation of class 'Grid'
 ********************************/
 
+// int Grid::minCountSquare() const {
+//     int min = 9, km = 0;
+//     for (int k = 0; k < 81; k++) {
+//         int cnt = _squares[k].countTrue();
+//         if ( cnt < min) {
+//             min = cnt;
+//             km = k;
+//         }
+//     }
+//     return km;
+// };
 
+int Grid::leastCount() const {
+   int k = -1, min;
+   for (int i = 0; i < 81; i++) {
+      const int m = _squares[i].countTrue();
+      if (m > 1 && (k == -1 || m < min)) {
+         min = m, k = i;
+      }
+   }
+   return k;
+}
+
+bool Grid::bruteForce() const {
+    if (isSolved()) {
+        return true;
+    }
+
+    int l = leastCount();
+    for (int i = 1; i <= 9; i++) {
+        if (_squares[l].isTrue(i)) {
+            if (!assign(l, i)) {
+                return false;
+            }
+        }
+    }
+}
 
 bool Grid::isSolved() const {
     for (int k = 0; k < _squares.size(); k++) {
@@ -194,7 +232,7 @@ Grid::Grid() : _squares(81) {
 //main entry point
 *****************/
 int main() {
-    std::cout << "-------- START -------" << std::endl;
+    std::cout << "-------- START CONSTRAINT PROPAGATION -------" << std::endl;
 
     Grid grid;
 
@@ -208,6 +246,14 @@ int main() {
             }  
         }
     }
-    std::cout << "-------- END -------" << std::endl;
+    std::cout << "-------- END CONSTRAINT PROPAGATION -------" << std::endl;
+
+    while (grid.leastCount() != -1)
+    {
+        
+    }
+    
+    
+
     return 0;
 }
