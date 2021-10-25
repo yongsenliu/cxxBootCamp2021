@@ -8,17 +8,31 @@ using namespace std;
 /**************************************************************
 // Two dimentional array for passing numbers to sovler one by one
 **************************************************************/
+// int sudoku[N][N] = {
+//    {3, 0, 0, 5, 0, 8, 0, 0, 2},
+//    {5, 0, 0, 0, 0, 0, 0, 0, 0},
+//    {0, 8, 7, 0, 0, 0, 0, 3, 1},
+//    {0, 0, 3, 0, 1, 0, 0, 8, 0},
+//    {9, 0, 0, 8, 6, 3, 0, 0, 5},
+//    {0, 5, 0, 0, 9, 0, 6, 0, 0},
+//    {1, 3, 0, 0, 0, 0, 2, 5, 0},
+//    {0, 0, 0, 0, 0, 0, 0, 7, 4},
+//    {0, 0, 5, 2, 0, 6, 3, 0, 0}
+// };
+
 int sudoku[N][N] = {
-   {0, 6, 0, 5, 0, 8, 0, 0, 2},
-   {5, 0, 0, 0, 0, 0, 0, 0, 0},
-   {0, 8, 7, 0, 0, 0, 0, 3, 1},
-   {0, 0, 3, 0, 1, 0, 0, 8, 0},
-   {9, 0, 0, 8, 6, 3, 0, 0, 5},
-   {0, 5, 0, 0, 9, 0, 6, 0, 0},
-   {1, 3, 0, 0, 0, 0, 2, 5, 0},
-   {0, 0, 0, 0, 0, 0, 0, 7, 4},
-   {0, 0, 5, 2, 0, 6, 3, 0, 0}
+   {0, 0, 7, 4, 0, 1, 0, 2, 0},
+   {8, 0, 0, 0, 0, 0, 0, 0, 7},
+   {0, 0, 0, 0, 0, 3, 0, 0, 0},
+   {0, 5, 0, 0, 0, 0, 6, 0, 0},
+   {0, 0, 8, 2, 0, 7, 0, 1, 0},
+   {0, 0, 0, 0, 9, 0, 0, 0, 0},
+   {0, 0, 4, 0, 3, 0, 0, 0, 0},
+   {0, 0, 0, 0, 8, 0, 0, 9, 0},
+   {7, 0, 0, 9, 0, 4, 1, 0, 0}
 };
+
+std::string sudokuStr = "..5..8..18......9.......78....4.....64....9......53..2.6.........138..5....9.714.";
 
 /********************************
 // Declaration of class 'Possible'
@@ -55,7 +69,7 @@ void Possible::eliminate(int i) {
     _boolens[i-1] = false; 
 };
 
-// Returns an iterator to the first element in the range [first,last) 
+//returns an iterator to the first element in the range [first,last) 
 //that compares equal to val. If no such element is found, the function 
 //returns last.
 // iterator is radom accessing
@@ -80,13 +94,15 @@ string Possible::str(int width) const {
 *****************************/
 class Grid {
     vector<Possible> _squares;
+    // vector<Possible> _backup;
 
 public:
     Possible possible(int k) const { return _squares[k]; }
     Grid();
     int leastCount() const;
-    bool bruteForce() const;
+    bool bruteForce();
     bool isSolved() const;
+    
     void print(ostream & s) const;
 
     // eliminate a possible from a square, 'value' is par for eliminating, 
@@ -94,6 +110,7 @@ public:
     bool eliminatePossibleFromSquare (int k, int value);
     bool assign(int k, int value);
     bool isInBoxOf(int row, int col, int k);
+    void initSudoku(string s);
 };
 
 /********************************
@@ -121,22 +138,53 @@ int Grid::leastCount() const {
       }
    }
    return k;
-}
+};
 
-bool Grid::bruteForce() const {
+bool Grid::bruteForce() {
+    
     if (isSolved()) {
         return true;
     }
 
+    vector<Possible> _temp1(81);
+    
     int l = leastCount();
+
+    Possible p = possible(l);
+
     for (int i = 1; i <= 9; i++) {
-        if (_squares[l].isTrue(i)) {
+        
+        if (p.isTrue(i)/*_squares[l].isTrue(i)*/) {
+
+            _temp1 = _squares;
+
             if (!assign(l, i)) {
-                return false;
+
+                _squares = _temp1;
+
+                if (!eliminatePossibleFromSquare(l, i)) {
+                    std::cout << "No solution" << std::endl;
+                    return false;
+                }
+
+            } else {
+
+                if (bruteForce()) {
+                    return true;
+                }
+                // } else {
+                //     if (!eliminatePossibleFromSquare(l, i)) {
+                //         std::cout << "No solution" << std::endl;
+                //         return false;
+                //     }
+                // }
+
             }
         }
     }
-}
+
+    return false;
+};
 
 bool Grid::isSolved() const {
     for (int k = 0; k < _squares.size(); k++) {
@@ -177,6 +225,8 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
 
     // if no possibles exist in index k, it means no solution, return 'false' to the function
     if (_squares[k].countTrue() == 0) {
+
+        std::cout << "Below empty square error occured when eliminate " << value <<" in row: " << (k/9) << ", col: " << (k%9) << std::endl;
         return false;
     } else if (_squares[k].countTrue() == 1) {// if only one possible value
         // apply the principle 1 to eliminate this 'true' value from all peers
@@ -203,7 +253,6 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
 bool Grid::isInBoxOf(int row, int col, int k) {
     int ri = ((k/9)/3)*3;
     int ci = (k%9)/3;
-
     if (((row/3)*3 == ri) && (col/3 == ci)) {
         return true;
     }
@@ -211,9 +260,15 @@ bool Grid::isInBoxOf(int row, int col, int k) {
 };
 
 bool Grid::assign(int k, int value) {
+    vector<Possible> _temp(81);
+    
     for (int i = 1; i <= 9; i++) {
         if (i != value) {
+            _temp = _squares;
             if (!eliminatePossibleFromSquare(k, i)) {
+                print(cout);
+                std::cout << "Time mechane to restore to previous grid...\n" << std::endl;
+                _squares = _temp;
                 return false;
             }
         }
@@ -221,10 +276,26 @@ bool Grid::assign(int k, int value) {
     return true;
 };
 
+void Grid::initSudoku(string s) {
+    int k = 0;
+    for (int i = 0; i < s.size(); i++) {
+        if (s[i] >= '1' && s[i] <= '9') {
+            if (!assign(k, s[i] - '0')) {
+                cerr << "error" << endl;
+                return;
+            }
+            k++;
+        } else if (s[i] == '0' || s[i] == '.') {
+            k++;
+        }
+    }
+};
+
 Grid::Grid() : _squares(81) {
     for (int i = 0; i < 81; i++) {
         _squares[i] = Possible();
     }
+    initSudoku(sudokuStr);
 };
 
 
@@ -235,25 +306,46 @@ int main() {
     std::cout << "-------- START CONSTRAINT PROPAGATION -------" << std::endl;
 
     Grid grid;
+    grid.print(cout);
 
-    for (int row = 0; row < 9; row++) {
-        for (int col = 0; col < 9; col++) {
-            int v = sudoku[row][col];
-            if (v != 0) {
-                grid.assign(9*row+col, v);
-                grid.print(cout);
-                std::cout << "\n\n" << std::endl;
-            }  
-        }
-    }
-    std::cout << "-------- END CONSTRAINT PROPAGATION -------" << std::endl;
+    // for (int row = 0; row < 9; row++) {
+    //     for (int col = 0; col < 9; col++) {
+    //         int v = sudoku[row][col];
+    //         if (v != 0) {
+    //             grid.assign(9*row+col, v);
+    //             // grid.print(cout);
+    //             // std::cout << "\n\n" << std::endl;
+    //         }  
+    //     }
+    // }
+    // grid.print(cout);
+    // std::cout << "\n" << std::endl;
+    std::cout << "-------- END CONSTRAINT PROPAGATION -------\n\n" << std::endl;
+    
 
-    while (grid.leastCount() != -1)
+    std::cout << "-------- START BRUTE FORCE -------" << std::endl;
+    
+
+    while (!grid.bruteForce())
     {
-        
+        int i = 0;
+        std::cout << "Brute force times: " << i+1 << std::endl;
+        grid.print(cout);
+        std::cout << "\n" << std::endl;
     }
     
+    // for (int i = 0; i < 20; i++) {
+    //     if (grid.bruteForce()) {
+    //         break;
+    //     }
+    //     std::cout << "Brute force times: " << i+1 << std::endl;
+    //     grid.print(cout);
+    //     std::cout << "\n" << std::endl;
+    // }
     
-
+    grid.print(cout);
+    std::cout << "-------- END BRUTE FORCE -------" << std::endl;
+    
     return 0;
+    
 }
