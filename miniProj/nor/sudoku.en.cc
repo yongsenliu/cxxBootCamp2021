@@ -10,15 +10,15 @@ public:
    Possible() : _b(9, true) {}
    bool   is_on(int i) const { return _b[i-1]; }
    int    count()      const { return std::count(_b.begin(), _b.end(), true); }
-   void   eliminate(int i)   { _b[i-1] = false; }
-   int    val()        const {
+   void   eliminatefromPossiblesOfValue(int i)   { _b[i-1] = false; }
+   int    valueOfFirstTrueInPossibles()        const {
       auto it = find(_b.begin(), _b.end(), true);
       return (it != _b.end() ? 1 + (it - _b.begin()) : -1);
    }
-   string str(int wth) const;
+   string getString(int wth) const;
 };
 
-string Possible::str(int width) const {
+string Possible::getString(int width) const {
    string s(width, ' ');
    int k = 0;
    for (int i = 1; i <= 9; i++) {
@@ -64,7 +64,7 @@ void Sudoku::write(ostream& o) const {
       }
       for (int j = 0; j < 9; j++) {
          if (j == 3 || j == 6) o << "| ";
-         o << _cells[i*9 + j].str(width);
+         o << _cells[i*9 + j].getString(width);
       }
       o << endl;
    }
@@ -107,12 +107,12 @@ bool Sudoku::eliminate(int k, int val) {
    if (!_cells[k].is_on(val)) {
       return true;
    }
-   _cells[k].eliminate(val);
+   _cells[k].eliminatefromPossiblesOfValue(val);
    const int N = _cells[k].count();
    if (N == 0) {
       return false;
    } else if (N == 1) {
-      const int v = _cells[k].val();
+      const int v = _cells[k].valueOfFirstTrueInPossibles();
       for (int i = 0; i < _neighbors[k].size(); i++) {
          if (!eliminate(_neighbors[k][i], v)) return false;
       }

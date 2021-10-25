@@ -28,11 +28,11 @@ class Possible {
     vector<bool> _boolens;
 public:
     Possible();
-    int countTrue() const;
-    bool isTrue(int i) const;
-    void eliminate(int i);
-    int val() const;
-    string str(int width) const;
+    int countTrueInPossibles() const;
+    bool isTrueForValueInPossibles(int i) const;
+    void eliminatefromPossiblesOfValue(int i);
+    int valueOfFirstTrueInPossibles() const;
+    string getString(int width) const;
 };
 
 /*************************************
@@ -40,34 +40,34 @@ public:
 *************************************/
 Possible::Possible() : _boolens(9, true) {};
 
-int Possible::countTrue() const {
+int Possible::countTrueInPossibles() const {
     //FIXME....
     return count(_boolens.begin(), _boolens.end(), true);
 };
 
 //get boolen value
-bool Possible::isTrue(int i) const {
+bool Possible::isTrueForValueInPossibles(int i) const {
     return _boolens[i-1];
 };
 
 //eliminate one possilbe by setting false
-void Possible::eliminate(int i) {
+void Possible::eliminatefromPossiblesOfValue(int i) {
     _boolens[i-1] = false; 
 };
 
 // Returns an iterator to the first element in the range [first,last) 
 //that compares equal to val. If no such element is found, the function 
 //returns last.
-int Possible::val() const {
+int Possible::valueOfFirstTrueInPossibles() const {
     auto it = find(_boolens.begin(), _boolens.end(), true);
     return (it != _boolens.end() ? 1 + (it - _boolens.begin()) : -1);
 };
 
-string Possible::str(int width) const {
+string Possible::getString(int width) const {
     string s(width, ' ');
     int k = 0;
     for (int i = 1; i <= 9; i++) {
-        if (isTrue(i)) {
+        if (isTrueForValueInPossibles(i)) {
             s[k++] = '0' + i;
         }
     }
@@ -86,7 +86,7 @@ public:
     Grid();
     void init();
     bool isSolved() const;
-    int leastCount() const;
+    int getIndexOfSquareWithLeastCountOfTrues() const;
     void print(ostream & s) const;
 
     // eliminate a possible from a square, 'value' is par for eliminating, 
@@ -170,7 +170,7 @@ void Grid::init() {
 
 bool Grid::isSolved() const {
     for (int k = 0; k < _squares.size(); k++) {
-        if (_squares[k].countTrue() != 1) {
+        if (_squares[k].countTrueInPossibles() != 1) {
             return false;
         }
     }
@@ -178,11 +178,11 @@ bool Grid::isSolved() const {
 };
 
 
-int Grid::leastCount() const {
+int Grid::getIndexOfSquareWithLeastCountOfTrues() const {
     int k = -1;
     int min;
     for (int i = 0; i< _squares.size(); i++) {
-        int m = _squares[i].countTrue();
+        int m = _squares[i].countTrueInPossibles();
         if (m > 1 && (k == -1 || m < min)) {
             min = m;
             k = i;
@@ -194,7 +194,7 @@ int Grid::leastCount() const {
 void Grid::print(ostream & s) const{
     int width = 1;
     for (int k = 0; k < _squares.size(); k++) {
-        width = max(width, 1 + _squares[k].countTrue());
+        width = max(width, 1 + _squares[k].countTrueInPossibles());
     }
 
     string str(3*width, '-');
@@ -204,7 +204,7 @@ void Grid::print(ostream & s) const{
         }
         for (int j = 0; j < 9; j++) {
             if (j == 3 || j == 6) s << "| ";
-            s << _squares[i*9 + j].str(width);
+            s << _squares[i*9 + j].getString(width);
         }
         s << endl;
     }
@@ -212,19 +212,19 @@ void Grid::print(ostream & s) const{
 
 bool Grid::eliminatePossibleFromSquare (int k, int value) {
     // if the value has already been eliminated, return true i.e. successful.
-    if (!_squares[k].isTrue(value)) {
+    if (!_squares[k].isTrueForValueInPossibles(value)) {
         return true;
     }
 
     // set possible for index k as 'false' for the value 
-    _squares[k].eliminate(value);
+    _squares[k].eliminatefromPossiblesOfValue(value);
 
     // if no possibles exist in index k, it means no solution, return 'false' to the function
-    if (_squares[k].countTrue() == 0) {
+    if (_squares[k].countTrueInPossibles() == 0) {
         return false;
-    } else if (_squares[k].countTrue() == 1) {// only one possible value
+    } else if (_squares[k].countTrueInPossibles() == 1) {// only one possible value
 
-        int v = _squares[k].val();
+        int v = _squares[k].valueOfFirstTrueInPossibles();
         for (int i = 0; i < _peers[k].size(); i++) {
             if (!eliminatePossibleFromSquare(_peers[k][i], v)) {
                 return false;
@@ -237,7 +237,7 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
         int n = 0, ks;
         for (int j = 0; j < 9; j++) {
             int p = _unit[k][i];
-            if (_squares[p].isTrue(value)) {
+            if (_squares[p].isTrueForValueInPossibles(value)) {
                 n++;
                 ks = p;
             }

@@ -8,31 +8,8 @@ using namespace std;
 /**************************************************************
 // Two dimentional array for passing numbers to sovler one by one
 **************************************************************/
-// int sudoku[N][N] = {
-//    {3, 0, 0, 5, 0, 8, 0, 0, 2},
-//    {5, 0, 0, 0, 0, 0, 0, 0, 0},
-//    {0, 8, 7, 0, 0, 0, 0, 3, 1},
-//    {0, 0, 3, 0, 1, 0, 0, 8, 0},
-//    {9, 0, 0, 8, 6, 3, 0, 0, 5},
-//    {0, 5, 0, 0, 9, 0, 6, 0, 0},
-//    {1, 3, 0, 0, 0, 0, 2, 5, 0},
-//    {0, 0, 0, 0, 0, 0, 0, 7, 4},
-//    {0, 0, 5, 2, 0, 6, 3, 0, 0}
-// };
 
-int sudoku[N][N] = {
-   {0, 0, 7, 4, 0, 1, 0, 2, 0},
-   {8, 0, 0, 0, 0, 0, 0, 0, 7},
-   {0, 0, 0, 0, 0, 3, 0, 0, 0},
-   {0, 5, 0, 0, 0, 0, 6, 0, 0},
-   {0, 0, 8, 2, 0, 7, 0, 1, 0},
-   {0, 0, 0, 0, 9, 0, 0, 0, 0},
-   {0, 0, 4, 0, 3, 0, 0, 0, 0},
-   {0, 0, 0, 0, 8, 0, 0, 9, 0},
-   {7, 0, 0, 9, 0, 4, 1, 0, 0}
-};
-
-std::string sudokuStr = "..5..8..18......9.......78....4.....64....9......53..2.6.........138..5....9.714.";
+std::string sudokuStr = "003020600900305001001806400008102900700000008006708200002609500800203009005010300";
 
 /********************************
 // Declaration of class 'Possible'
@@ -42,11 +19,11 @@ class Possible {
     vector<bool> _boolens;
 public:
     Possible();
-    int countTrue() const;
-    bool isTrue(int i) const;
-    void eliminate(int i);
-    int val() const;
-    string str(int width) const;
+    int countTrueInPossibles() const;
+    bool isTrueForValueInPossibles(int i) const;
+    void eliminatefromPossiblesOfValue(int i);
+    int valueOfFirstTrueInPossibles() const;
+    string getString(int width) const;
 };
 
 /*************************************
@@ -54,18 +31,18 @@ public:
 *************************************/
 Possible::Possible() : _boolens(9, true) {};
 
-int Possible::countTrue() const {
+int Possible::countTrueInPossibles() const {
     //FIXME....
     return count(_boolens.begin(), _boolens.end(), true);
 };
 
 //get boolen value
-bool Possible::isTrue(int i) const {
+bool Possible::isTrueForValueInPossibles(int i) const {
     return _boolens[i-1];
 };
 
 //eliminate one possilbe by setting false
-void Possible::eliminate(int i) {
+void Possible::eliminatefromPossiblesOfValue(int i) {
     _boolens[i-1] = false; 
 };
 
@@ -73,16 +50,16 @@ void Possible::eliminate(int i) {
 //that compares equal to val. If no such element is found, the function 
 //returns last.
 // iterator is radom accessing
-int Possible::val() const {
+int Possible::valueOfFirstTrueInPossibles() const {
     auto iterator = find(_boolens.begin(), _boolens.end(), true);
     return (iterator != _boolens.end() ? (iterator - _boolens.begin()) + 1 : -1);
 };
 
-string Possible::str(int width) const {
+string Possible::getString(int width) const {
     string s(width, ' ');
     int k = 0;
     for (int i = 1; i <= 9; i++) {
-        if (isTrue(i)) {
+        if (isTrueForValueInPossibles(i)) {
             s[k++] = '0' + i;
         }
     }
@@ -93,13 +70,15 @@ string Possible::str(int width) const {
 // Declaration of class 'Grid'
 *****************************/
 class Grid {
+
+    /*A square is 1 of 81 cells in a grid*/
     vector<Possible> _squares;
     // vector<Possible> _backup;
 
 public:
     Possible possible(int k) const { return _squares[k]; }
     Grid();
-    int leastCount() const;
+    int getIndexOfSquareWithLeastCountOfTrues() const;
     bool bruteForce();
     bool isSolved() const;
     
@@ -117,22 +96,10 @@ public:
 // Implementation of class 'Grid'
 ********************************/
 
-// int Grid::minCountSquare() const {
-//     int min = 9, km = 0;
-//     for (int k = 0; k < 81; k++) {
-//         int cnt = _squares[k].countTrue();
-//         if ( cnt < min) {
-//             min = cnt;
-//             km = k;
-//         }
-//     }
-//     return km;
-// };
-
-int Grid::leastCount() const {
+int Grid::getIndexOfSquareWithLeastCountOfTrues() const {
    int k = -1, min;
    for (int i = 0; i < 81; i++) {
-      const int m = _squares[i].countTrue();
+      const int m = _squares[i].countTrueInPossibles();
       if (m > 1 && (k == -1 || m < min)) {
          min = m, k = i;
       }
@@ -148,13 +115,13 @@ bool Grid::bruteForce() {
 
     vector<Possible> _temp1(81);
     
-    int l = leastCount();
+    int l = getIndexOfSquareWithLeastCountOfTrues();
 
     Possible p = possible(l);
 
     for (int i = 1; i <= 9; i++) {
         
-        if (p.isTrue(i)/*_squares[l].isTrue(i)*/) {
+        if (p.isTrueForValueInPossibles(i)/*_squares[l].isTrue(i)*/) {
 
             _temp1 = _squares;
 
@@ -188,7 +155,7 @@ bool Grid::bruteForce() {
 
 bool Grid::isSolved() const {
     for (int k = 0; k < _squares.size(); k++) {
-        if (_squares[k].countTrue() != 1) {
+        if (_squares[k].countTrueInPossibles() != 1) {
             return false;
         }
     }
@@ -198,7 +165,7 @@ bool Grid::isSolved() const {
 void Grid::print(ostream & s) const {
     int width = 1;
     for (int k = 0; k < _squares.size(); k++) {
-        width = max(width, 1 + _squares[k].countTrue());
+        width = max(width, 1 + _squares[k].countTrueInPossibles());
     }
 
     string str(3*width, '-');
@@ -208,7 +175,7 @@ void Grid::print(ostream & s) const {
         }
         for (int j = 0; j < 9; j++) {
             if (j == 3 || j == 6) s << "| ";
-            s << _squares[i*9 + j].str(width);
+            s << _squares[i*9 + j].getString(width);
         }
         s << endl;
     }
@@ -216,21 +183,21 @@ void Grid::print(ostream & s) const {
 
 bool Grid::eliminatePossibleFromSquare (int k, int value) {
     // if the value has already been eliminated, return true i.e. successful.
-    if (!_squares[k].isTrue(value)) {
+    if (!_squares[k].isTrueForValueInPossibles(value)) {
         return true;
     }
 
     // set possible for index k as 'false' for the value 
-    _squares[k].eliminate(value);
+    _squares[k].eliminatefromPossiblesOfValue(value);
 
     // if no possibles exist in index k, it means no solution, return 'false' to the function
-    if (_squares[k].countTrue() == 0) {
+    if (_squares[k].countTrueInPossibles() == 0) {
 
         std::cout << "Below empty square error occured when eliminate " << value <<" in row: " << (k/9) << ", col: " << (k%9) << std::endl;
         return false;
-    } else if (_squares[k].countTrue() == 1) {// if only one possible value
+    } else if (_squares[k].countTrueInPossibles() == 1) {// if only one possible value
         // apply the principle 1 to eliminate this 'true' value from all peers
-        int value = _squares[k].val();
+        int value = _squares[k].valueOfFirstTrueInPossibles();
 
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
@@ -305,6 +272,7 @@ Grid::Grid() : _squares(81) {
 int main() {
     std::cout << "-------- START CONSTRAINT PROPAGATION -------" << std::endl;
 
+    // constraint propagation is included inside constructor
     Grid grid;
     grid.print(cout);
 
@@ -323,28 +291,26 @@ int main() {
     std::cout << "-------- END CONSTRAINT PROPAGATION -------\n\n" << std::endl;
     
 
-    std::cout << "-------- START BRUTE FORCE -------" << std::endl;
-    
-
-    while (!grid.bruteForce())
-    {
-        int i = 0;
-        std::cout << "Brute force times: " << i+1 << std::endl;
-        grid.print(cout);
-        std::cout << "\n" << std::endl;
-    }
-    
-    // for (int i = 0; i < 20; i++) {
-    //     if (grid.bruteForce()) {
-    //         break;
-    //     }
+    // std::cout << "-------- START BRUTE FORCE -------" << std::endl;
+    // while (!grid.bruteForce())
+    // {
+    //     int i = 0;
     //     std::cout << "Brute force times: " << i+1 << std::endl;
     //     grid.print(cout);
     //     std::cout << "\n" << std::endl;
     // }
     
-    grid.print(cout);
-    std::cout << "-------- END BRUTE FORCE -------" << std::endl;
+    // // for (int i = 0; i < 20; i++) {
+    // //     if (grid.bruteForce()) {
+    // //         break;
+    // //     }
+    // //     std::cout << "Brute force times: " << i+1 << std::endl;
+    // //     grid.print(cout);
+    // //     std::cout << "\n" << std::endl;
+    // // }
+    
+    // grid.print(cout);
+    // std::cout << "-------- END BRUTE FORCE -------" << std::endl;
     
     return 0;
     
