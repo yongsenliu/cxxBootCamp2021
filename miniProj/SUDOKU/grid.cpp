@@ -40,7 +40,7 @@ bool Grid::bruteForce(/*std::vector<Possible> &_s*/) {
                 _squares = _temp;
                 if (!eliminatePossibleFromSquare(least, value)) {
                     _squares = _temp;
-                    std::cout << "NO SOLUTION FOUNDED BY BRUTE FORCING, END UP WITH :(" << std::endl;
+                    std::cout << "NO SOLUTION FOUNDED BY BRUTE FORCING, END UP WITH:" << std::endl;
                     print(std::cout);
                     return false;
                 }
@@ -91,21 +91,21 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
     // set possible for index k as 'false' for the value 
     _squares[k].eliminatefromPossiblesOfValue(value);
 
-    // if no possibles exist in index k, it means no solution, return 'false' to the function
-    if (_squares[k].countTrueInPossibles() == 0) {
+    const int count = _squares[k].countTrueInPossibles();
+    if (count == 0) {
 
         std::cout << "Below empty square error occured when eliminate " << value <<" in row: " << (k/9) << ", col: " << (k%9) << std::endl;
         return false;
-    } else if (_squares[k].countTrueInPossibles() == 1) {// if only one possible value
-        // apply the principle 1 to eliminate this 'true' value from all peers
-        int value = _squares[k].valueOfFirstTrueInPossibles();
+    } else if (count == 1) {// if only one possible value
 
+    // apply the 1st principle of norvig's constraint propagation to eliminate this 'true' value from all peers
+        int v = _squares[k].valueOfFirstTrueInPossibles();
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
                 // k%9 is the col and k/9 is the row for the square
                 if ((col == k % 9)||(row == k / 9) || isInBoxOf(row, col, k)) {
                     if (!((9*row+col) == k)) {
-                        if (!eliminatePossibleFromSquare(9*row+col, value)) {
+                        if (!eliminatePossibleFromSquare(9*row+col, v)) {
                             return false;
                         }
                     }
@@ -113,6 +113,30 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
             }
         }
     }
+
+    // apply the 2nd principle of prapagation
+    int cnt = 0, ks;
+    for (int row = 0; row < 9; row++) {
+        
+        for (int col = 0; col < 9; col++) {
+            
+            if (isInBoxOf(row, col, k)) {
+                //for (int i = 0; i < 9; i++) {
+                if (_squares[9*row + col].isTrueForValueInPossibles(value)) {
+                    cnt++, ks = 9*row + col;
+                }
+                //}
+            }
+            
+        }
+    }
+
+    if (cnt == 0) {
+        return false;
+    } else if (cnt == 1) {
+        if (!assign(ks, value)) return false;
+    }
+
     return true;
 };
 
@@ -120,7 +144,7 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
 // thus peers in the Box can be found out for it
 bool Grid::isInBoxOf(int row, int col, int k) const {
 
-    // Calculate and match range of row&col where 'k' is. 
+    // Calculate and match range of row&col in 2D where 'k' is. 
     int rowRange = ((k/9)/3)*3;
     int colRange = (k%9)/3;
 

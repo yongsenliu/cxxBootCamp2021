@@ -6,7 +6,7 @@
 
 #include "grid.hpp"
 
-std::string sudokuStr = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......";
+std::string sudokuStr = "..84...3....3.....9....157479...8........7..514.....2...9.6...2.5....4......9..56";
 
 int main() {
     std::cout << "-------- START CONSTRAINT PROPAGATION -------" << std::endl;
@@ -16,15 +16,15 @@ int main() {
     grid.print(std::cout);
     std::cout << "-------- END CONSTRAINT PROPAGATION -------\n\n" << std::endl; 
 
-    std::cout << "-------- START BRUTE FORCE -------" << std::endl;
-    while (!grid.bruteForce())
-    {
-        int i = 0;
-        std::cout << "Brute force times: " << i+1 << std::endl;
-        grid.print(std::cout);
-        std::cout << "\n" << std::endl;
-    }
-    std::cout << "-------- END BRUTE FORCE -------" << std::endl;
+    // std::cout << "-------- START BRUTE FORCE -------" << std::endl;
+    // while (!grid.bruteForce())
+    // {
+    //     int i = 0;
+    //     std::cout << "Brute force times: " << i+1 << std::endl;
+    //     grid.print(std::cout);
+    //     std::cout << "\n" << std::endl;
+    // }
+    // std::cout << "-------- END BRUTE FORCE -------" << std::endl;
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
