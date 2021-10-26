@@ -24,17 +24,6 @@ int main() {
         grid.print(std::cout);
         std::cout << "\n" << std::endl;
     }
-    
-    // // for (int i = 0; i < 20; i++) {
-    // //     if (grid.bruteForce()) {
-    // //         break;
-    // //     }
-    // //     std::cout << "Brute force times: " << i+1 << std::endl;
-    // //     grid.print(cout);
-    // //     std::cout << "\n" << std::endl;
-    // // }
-    
-    // grid.print(cout);
     std::cout << "-------- END BRUTE FORCE -------" << std::endl;
 
     auto stop = std::chrono::high_resolution_clock::now();

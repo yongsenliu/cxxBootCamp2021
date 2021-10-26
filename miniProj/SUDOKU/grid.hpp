@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+
 #include "possible.hpp"
 
 /*****************************
@@ -13,13 +14,12 @@ class Grid {
 
     /*A square is 1 of 81 cells in a grid*/
     std::vector<Possible> _squares;
-    // vector<Possible> _backup;
 
 public:
     Possible possible(int k) const { return _squares[k]; }
     Grid(std::string s);
     int getIndexOfSquareWithLeastCountOfTrues() const;
-    bool bruteForce();
+    bool bruteForce(/*std::vector<Possible> &_s*/);
     bool isSolved() const;
     
     void print(std::ostream & s) const;
@@ -28,7 +28,7 @@ public:
     //'k' is the index
     bool eliminatePossibleFromSquare (int k, int value);
     bool assign(int k, int value);
-    bool isInBoxOf(int row, int col, int k);
+    bool isInBoxOf(int row, int col, int k) const;
     void initSudoku(std::string s);
 };
 

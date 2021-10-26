@@ -15,45 +15,43 @@ int Grid::getIndexOfSquareWithLeastCountOfTrues() const {
    return k;
 };
 
-bool Grid::bruteForce() {
-    
+/*FIXME*/
+bool Grid::bruteForce(/*std::vector<Possible> &_s*/) {
     if (isSolved()) {
         return true;
     }
+    std::vector<Possible> _temp(81);
+    int least = getIndexOfSquareWithLeastCountOfTrues();
+    Possible p = possible(least);
 
-    std::vector<Possible> _temp1(81);
-    
-    int l = getIndexOfSquareWithLeastCountOfTrues();
-
-    Possible p = possible(l);
-
-    for (int i = 1; i <= 9; i++) {
-        
-        if (p.isTrueForValueInPossibles(i)/*_squares[l].isTrue(i)*/) {
-
-            _temp1 = _squares;
-
-            if (!assign(l, i)) {
-
-                _squares = _temp1;
-
-                if (!eliminatePossibleFromSquare(l, i)) {
-                    _squares = _temp1;
-                    std::cout << "No solution" << std::endl;
-                    return false;
+    for (int value = 1; value <= 9; value++) {
+        if (p.isTrueForValueInPossibles(value)) {
+            _temp = _squares;
+            if (assign(least, value)) {
+                _temp = _squares;
+                if (bruteForce()) 
+                {
+                    return true;
+                } else {
+                    _squares = _temp;
                 }
 
             } else {
-
-                // if (bruteForce()) {
-                //     return true;
-                // }
+                _squares = _temp;
+                if (!eliminatePossibleFromSquare(least, value)) {
+                    _squares = _temp;
+                    std::cout << "NO SOLUTION FOUNDED BY BRUTE FORCING, END UP WITH :(" << std::endl;
+                    print(std::cout);
+                    return false;
+                }
             }
         }
     }
-    return false;
+
+    return true;
 };
 
+// Sudoku is solved only when every square has one one true in its 'possible'
 bool Grid::isSolved() const {
     for (int k = 0; k < _squares.size(); k++) {
         if (_squares[k].countTrueInPossibles() != 1) {
@@ -63,6 +61,7 @@ bool Grid::isSolved() const {
     return true;
 };
 
+// pretty print on the screen
 void Grid::print(std::ostream & s) const {
     int width = 1;
     for (int k = 0; k < _squares.size(); k++) {
@@ -82,6 +81,7 @@ void Grid::print(std::ostream & s) const {
     }
 };
 
+// eliminate a value from square k and do propagation to its peers
 bool Grid::eliminatePossibleFromSquare (int k, int value) {
     // if the value has already been eliminated, return true i.e. successful.
     if (!_squares[k].isTrueForValueInPossibles(value)) {
@@ -118,15 +118,19 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
 
 // this func is to find out if a combination of row&col are in the Box of a square
 // thus peers in the Box can be found out for it
-bool Grid::isInBoxOf(int row, int col, int k) {
-    int ri = ((k/9)/3)*3;
-    int ci = (k%9)/3;
-    if (((row/3)*3 == ri) && (col/3 == ci)) {
+bool Grid::isInBoxOf(int row, int col, int k) const {
+
+    // Calculate and match range of row&col where 'k' is. 
+    int rowRange = ((k/9)/3)*3;
+    int colRange = (k%9)/3;
+
+    if (((row/3)*3 == rowRange) && (col/3 == colRange)) {
         return true;
     }
     return false;
 };
 
+// this func is to assign a value into k-square
 bool Grid::assign(int k, int value) {
     // vector<Possible> _temp(81);
     
@@ -144,6 +148,7 @@ bool Grid::assign(int k, int value) {
     return true;
 };
 
+// init a grid of 'EVERYTHING IS POSSIBLE' with assigning values from a string. 
 void Grid::initSudoku(std::string s) {
     int k = 0;
     for (int i = 0; i < s.size(); i++) {
@@ -159,6 +164,7 @@ void Grid::initSudoku(std::string s) {
     }
 };
 
+// constructor with the init function
 Grid::Grid(std::string s) : _squares(81) {
     for (int i = 0; i < 81; i++) {
         _squares[i] = Possible();
