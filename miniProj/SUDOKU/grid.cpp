@@ -30,41 +30,43 @@ bool Grid::searching(/*std::vector<Possible> &_s*/) {
         if (p.isTrueForValueInPossibles(value)) {
             _temp = _squares;
             if (assign(least, value)) {
-                _temp = _squares;
+                // _temp = _squares;
                 if (searching()) 
                 {
-                    std::cout << "Good guess!" << std::endl;
-                    searchingCounter ++;
-                    std::cout << "Total guesses:"<< searchingCounter << std::endl;
-                    print(std::cout);
+                    //std::cout << "Good guess!" << std::endl;
+                    //searchingCounter ++;
+                    //std::cout << "Total guesses:"<< searchingCounter << std::endl;
+                    //print(std::cout);
                     return true;
                 } else {
-                    //least = getIndexOfSquareWithLeastCountOfTrues();
-                    std::cout << "Bad guess, time machine #1..." << std::endl;
+                    //std::cout << "Bad guess, time machine #1..." << std::endl;
                     searchingCounter ++;
-                    std::cout << "Total guesses:"<< searchingCounter << std::endl;
+                    //std::cout << "Total guesses:"<< searchingCounter << std::endl;
                     _squares = _temp;
+
                 }
 
             } else {
-                //least = getIndexOfSquareWithLeastCountOfTrues();
-                std::cout << "Bad guess, time machine #2..." << std::endl;
+                //std::cout << "Bad guess, time machine #2..." << std::endl;
                 _squares = _temp;
+                _temp = _squares;
                 if (!eliminatePossibleFromSquare(least, value)) {
-                    std::cout << "Bad guess, time machine #3..." << std::endl;
+                    //std::cout << "Bad guess, time machine #3..." << std::endl;
                     searchingCounter ++;
-                    std::cout << "Total guesses:"<< searchingCounter << std::endl;
+                    //std::cout << "Total guesses:"<< searchingCounter << std::endl;
                     _squares = _temp;
                     //std::cout << "SAME CONTRADICTION WAS REPEATED TWICE WHILE SEARCHING, ENDED UP WITH " << searchingCounter << " SEARCHES, AND RESULT:" << std::endl;
                     //print(std::cout);
                     return false;
+                } else {
+                    _temp = _squares;
                 }
             }
         }
     }
     // std::cout << "SAME CONTRADICTION WAS REPEATED TWICE WHILE SEARCHING, ENDED UP WITH " << searchingCounter << " SEARCHES, AND RESULT:" << std::endl;
 
-    return true;
+    return false;
 };
 
 // Sudoku is solved only when every square has one one true in its 'possible'
@@ -109,8 +111,8 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
 
     const int count = _squares[k].countTrueInPossibles();
     if (count == 0) {
-        searchingCounter ++;
-        std::cout << "Constradiction occured when eliminate " << value <<" in row: " << (k/9) << ", col: " << (k%9) << std::endl;
+        //searchingCounter ++;
+        //std::cout << "Constradiction occured when eliminate " << value <<" in row: " << (k/9) << ", col: " << (k%9) << std::endl;
         return false;
     } else if (count == 1) {// if only one possible value
 
