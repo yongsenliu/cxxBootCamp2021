@@ -14,13 +14,12 @@ class Grid {
 
     /*A square is 1 of 81 cells in a grid*/
     std::vector<Possible> _squares;
-    int searchingCounter;
-
 public:
+    int searchingCounter;
     Possible possible(int k) const { return _squares[k]; }
     Grid(std::string s);
     int getIndexOfSquareWithLeastCountOfTrues() const;
-    bool search(/*std::vector<Possible> &_s*/);
+    bool searching(/*std::vector<Possible> &_s*/);
     bool isSolved() const;
     
     void print(std::ostream & s) const;

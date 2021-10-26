@@ -16,8 +16,8 @@ int Grid::getIndexOfSquareWithLeastCountOfTrues() const {
    return k;
 };
 
-//TODO: update algurithm for a better search
-bool Grid::search(/*std::vector<Possible> &_s*/) {
+//TODO: Keep updating algorithm for better search results
+bool Grid::searching(/*std::vector<Possible> &_s*/) {
     if (isSolved()) {
         return true;
     }
@@ -31,26 +31,38 @@ bool Grid::search(/*std::vector<Possible> &_s*/) {
             _temp = _squares;
             if (assign(least, value)) {
                 _temp = _squares;
-                if (search()) 
+                if (searching()) 
                 {
+                    std::cout << "Good guess!" << std::endl;
+                    searchingCounter ++;
+                    std::cout << "Total guesses:"<< searchingCounter << std::endl;
+                    print(std::cout);
                     return true;
                 } else {
-                    std::cout << "Time machine..." << std::endl;
+                    //least = getIndexOfSquareWithLeastCountOfTrues();
+                    std::cout << "Bad guess, time machine #1..." << std::endl;
+                    searchingCounter ++;
+                    std::cout << "Total guesses:"<< searchingCounter << std::endl;
                     _squares = _temp;
                 }
 
             } else {
+                //least = getIndexOfSquareWithLeastCountOfTrues();
+                std::cout << "Bad guess, time machine #2..." << std::endl;
                 _squares = _temp;
                 if (!eliminatePossibleFromSquare(least, value)) {
-                    std::cout << "Time machine..." << std::endl;
+                    std::cout << "Bad guess, time machine #3..." << std::endl;
+                    searchingCounter ++;
+                    std::cout << "Total guesses:"<< searchingCounter << std::endl;
                     _squares = _temp;
-                    std::cout << "SAME CONTRADICTION REPEATED TWICE WHILE SEARCHING, ENDED UP WITH " << searchingCounter << " SEARCHES, AND RESULT:" << std::endl;
-                    print(std::cout);
-                    return true;
+                    //std::cout << "SAME CONTRADICTION WAS REPEATED TWICE WHILE SEARCHING, ENDED UP WITH " << searchingCounter << " SEARCHES, AND RESULT:" << std::endl;
+                    //print(std::cout);
+                    return false;
                 }
             }
         }
     }
+    // std::cout << "SAME CONTRADICTION WAS REPEATED TWICE WHILE SEARCHING, ENDED UP WITH " << searchingCounter << " SEARCHES, AND RESULT:" << std::endl;
 
     return true;
 };
