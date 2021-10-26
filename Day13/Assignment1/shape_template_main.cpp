@@ -4,7 +4,7 @@ considered. Only, and if only both area and perimeter are equal then the objects
 
 #include "shape.h"
 
-template <typename T1, typename T2>
+template <typename T1, typename T2> 
 void compare(const T1 _a, const T2 _b) {
     if (_a > _b) std::cout << "a is greater than b" << std::endl;
     if (_a == _b) std::cout << "a is equal than b" << std::endl;
@@ -28,8 +28,10 @@ int main(){
     compare(circ1, circ2);
     compare(rectangle1, triang1);
     compare(rectangle1, rectangle1);
+    compare(1, 3.14f);
+    compare(1, 1.0);
 
-    for(size_t i=0;i<6;i++) {
+    for (size_t i=0;i<6;i++) {
         delete shapes[i];
     }
 
