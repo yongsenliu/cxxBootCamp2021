@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <chrono>
 #define N 9
 using namespace std;
 
@@ -9,7 +10,7 @@ using namespace std;
 // Two dimentional array for passing numbers to sovler one by one
 **************************************************************/
 
-std::string sudokuStr = "003020600900305001001806400008102900700000008006708200002609500800203009005010300";
+std::string sudokuStr = "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......";
 
 /********************************
 // Declaration of class 'Possible'
@@ -130,26 +131,19 @@ bool Grid::bruteForce() {
                 _squares = _temp1;
 
                 if (!eliminatePossibleFromSquare(l, i)) {
+                    _squares = _temp1;
                     std::cout << "No solution" << std::endl;
                     return false;
                 }
 
             } else {
 
-                if (bruteForce()) {
-                    return true;
-                }
-                // } else {
-                //     if (!eliminatePossibleFromSquare(l, i)) {
-                //         std::cout << "No solution" << std::endl;
-                //         return false;
-                //     }
+                // if (bruteForce()) {
+                //     return true;
                 // }
-
             }
         }
     }
-
     return false;
 };
 
@@ -227,15 +221,15 @@ bool Grid::isInBoxOf(int row, int col, int k) {
 };
 
 bool Grid::assign(int k, int value) {
-    vector<Possible> _temp(81);
+    // vector<Possible> _temp(81);
     
     for (int i = 1; i <= 9; i++) {
         if (i != value) {
-            _temp = _squares;
+            // _temp = _squares;
             if (!eliminatePossibleFromSquare(k, i)) {
-                print(cout);
-                std::cout << "Time mechane to restore to previous grid...\n" << std::endl;
-                _squares = _temp;
+                // print(cout);
+                // std::cout << "Time mechane to restore to previous grid...\n" << std::endl;
+                // _squares = _temp;
                 return false;
             }
         }
@@ -271,34 +265,20 @@ Grid::Grid() : _squares(81) {
 *****************/
 int main() {
     std::cout << "-------- START CONSTRAINT PROPAGATION -------" << std::endl;
-
+    auto start = std::chrono::high_resolution_clock::now();
     // constraint propagation is included inside constructor
     Grid grid;
     grid.print(cout);
+    std::cout << "-------- END CONSTRAINT PROPAGATION -------\n\n" << std::endl; 
 
-    // for (int row = 0; row < 9; row++) {
-    //     for (int col = 0; col < 9; col++) {
-    //         int v = sudoku[row][col];
-    //         if (v != 0) {
-    //             grid.assign(9*row+col, v);
-    //             // grid.print(cout);
-    //             // std::cout << "\n\n" << std::endl;
-    //         }  
-    //     }
-    // }
-    // grid.print(cout);
-    // std::cout << "\n" << std::endl;
-    std::cout << "-------- END CONSTRAINT PROPAGATION -------\n\n" << std::endl;
-    
-
-    // std::cout << "-------- START BRUTE FORCE -------" << std::endl;
-    // while (!grid.bruteForce())
-    // {
-    //     int i = 0;
-    //     std::cout << "Brute force times: " << i+1 << std::endl;
-    //     grid.print(cout);
-    //     std::cout << "\n" << std::endl;
-    // }
+    std::cout << "-------- START BRUTE FORCE -------" << std::endl;
+    while (!grid.bruteForce())
+    {
+        int i = 0;
+        std::cout << "Brute force times: " << i+1 << std::endl;
+        grid.print(cout);
+        std::cout << "\n" << std::endl;
+    }
     
     // // for (int i = 0; i < 20; i++) {
     // //     if (grid.bruteForce()) {
@@ -310,8 +290,11 @@ int main() {
     // // }
     
     // grid.print(cout);
-    // std::cout << "-------- END BRUTE FORCE -------" << std::endl;
-    
+    std::cout << "-------- END BRUTE FORCE -------" << std::endl;
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Time of execution: " << duration.count() << " microseconds" << std::endl;
     return 0;
     
 }
