@@ -3,32 +3,43 @@
 #include <algorithm>
 #include <memory>
 #include <chrono>
+#include <fstream>
 
 #include "grid.hpp"
 
-std::string sudokuStr = "..84...3....3.....9....157479...8........7..514.....2...9.6...2.5....4......9..56";
+// Use string lines from txt file instead
+//std::string sudokuStr = ".....6....59.....82....8....45........3........6..3.54...325..6..................";
 
 int main() {
-    std::cout << "-------- START CONSTRAINT PROPAGATION -------" << std::endl;
-    auto start = std::chrono::high_resolution_clock::now();
-    // constraint propagation is included inside constructor
-    Grid grid(sudokuStr);
-    grid.print(std::cout);
-    std::cout << "-------- END CONSTRAINT PROPAGATION -------\n\n" << std::endl; 
 
-    // std::cout << "-------- START BRUTE FORCE -------" << std::endl;
-    // while (!grid.bruteForce())
-    // {
-    //     int i = 0;
-    //     std::cout << "Brute force times: " << i+1 << std::endl;
-    //     grid.print(std::cout);
-    //     std::cout << "\n" << std::endl;
-    // }
-    // std::cout << "-------- END BRUTE FORCE -------" << std::endl;
+    std::ifstream file("sudokus.txt");
+    std::string sudokuStringLine;
 
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time of execution: " << duration.count() << " microseconds" << std::endl;
+    while (getline(file, sudokuStringLine)) {
+        
+        std::cout << "\n-------- START CONSTRAINT PROPAGATION RULE 1 AND 2 -------" << std::endl;
+        auto start = std::chrono::high_resolution_clock::now();
+
+        Grid grid(sudokuStringLine);
+        grid.print(std::cout);
+        std::cout << "-------- END CONSTRAINT PROPAGATION -------\n\n" << std::endl; 
+
+        std::cout << "-------- START SEARCHING -------" << std::endl;
+        while (!grid.search())
+        {
+            int i = 0;
+            std::cout << "Brute force times: " << i+1 << std::endl;
+            grid.print(std::cout);
+            std::cout << "\n" << std::endl;
+        }
+        std::cout << "-------- END SEARCHING-------\n" << std::endl;
+
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::cout << "Time of execution: " << duration.count() << " microseconds" << std::endl;
+    }
+
+    
     return 0;
     
 }

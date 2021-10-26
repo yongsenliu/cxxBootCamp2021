@@ -80,7 +80,7 @@ public:
     Possible possible(int k) const { return _squares[k]; }
     Grid();
     int getIndexOfSquareWithLeastCountOfTrues() const;
-    bool bruteForce();
+    bool search();
     bool isSolved() const;
     
     void print(ostream & s) const;
@@ -108,7 +108,7 @@ int Grid::getIndexOfSquareWithLeastCountOfTrues() const {
    return k;
 };
 
-bool Grid::bruteForce() {
+bool Grid::search() {
     
     if (isSolved()) {
         return true;
@@ -272,7 +272,7 @@ int main() {
     std::cout << "-------- END CONSTRAINT PROPAGATION -------\n\n" << std::endl; 
 
     std::cout << "-------- START BRUTE FORCE -------" << std::endl;
-    while (!grid.bruteForce())
+    while (!grid.search())
     {
         int i = 0;
         std::cout << "Brute force times: " << i+1 << std::endl;

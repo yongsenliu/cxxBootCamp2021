@@ -4,6 +4,7 @@
 // Implementation of class 'Grid'
 ********************************/
 
+// get a square index of least counts of true
 int Grid::getIndexOfSquareWithLeastCountOfTrues() const {
    int k = -1, min;
    for (int i = 0; i < 81; i++) {
@@ -15,12 +16,13 @@ int Grid::getIndexOfSquareWithLeastCountOfTrues() const {
    return k;
 };
 
-/*FIXME*/
-bool Grid::bruteForce(/*std::vector<Possible> &_s*/) {
+//TODO: update algurithm for a better search
+bool Grid::search(/*std::vector<Possible> &_s*/) {
     if (isSolved()) {
         return true;
     }
     std::vector<Possible> _temp(81);
+    
     int least = getIndexOfSquareWithLeastCountOfTrues();
     Possible p = possible(least);
 
@@ -29,20 +31,22 @@ bool Grid::bruteForce(/*std::vector<Possible> &_s*/) {
             _temp = _squares;
             if (assign(least, value)) {
                 _temp = _squares;
-                if (bruteForce()) 
+                if (search()) 
                 {
                     return true;
                 } else {
+                    std::cout << "Time machine..." << std::endl;
                     _squares = _temp;
                 }
 
             } else {
                 _squares = _temp;
                 if (!eliminatePossibleFromSquare(least, value)) {
+                    std::cout << "Time machine..." << std::endl;
                     _squares = _temp;
-                    std::cout << "NO SOLUTION FOUNDED BY BRUTE FORCING, END UP WITH:" << std::endl;
+                    std::cout << "SAME CONTRADICTION REPEATED TWICE WHILE SEARCHING, ENDED UP WITH " << searchingCounter << " SEARCHES, AND RESULT:" << std::endl;
                     print(std::cout);
-                    return false;
+                    return true;
                 }
             }
         }
@@ -93,12 +97,12 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
 
     const int count = _squares[k].countTrueInPossibles();
     if (count == 0) {
-
-        std::cout << "Below empty square error occured when eliminate " << value <<" in row: " << (k/9) << ", col: " << (k%9) << std::endl;
+        searchingCounter ++;
+        std::cout << "Constradiction occured when eliminate " << value <<" in row: " << (k/9) << ", col: " << (k%9) << std::endl;
         return false;
     } else if (count == 1) {// if only one possible value
 
-    // apply the 1st principle of norvig's constraint propagation to eliminate this 'true' value from all peers
+    // Apply the 1st rule of norvig's constraint propagation to eliminate this 'true' value from all peers
         int v = _squares[k].valueOfFirstTrueInPossibles();
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
@@ -114,29 +118,23 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
         }
     }
 
-    // apply the 2nd principle of prapagation
-    int cnt = 0, ks;
+    // Apply the 2nd rule of prapagation to put the uniq value in the unit of square k.
+    // kUnique stands for the unique index to put THE value 
+    int cnt = 0, kUnique;
     for (int row = 0; row < 9; row++) {
-        
         for (int col = 0; col < 9; col++) {
-            
             if (isInBoxOf(row, col, k)) {
-                //for (int i = 0; i < 9; i++) {
                 if (_squares[9*row + col].isTrueForValueInPossibles(value)) {
-                    cnt++, ks = 9*row + col;
+                    cnt++, kUnique = 9*row + col;
                 }
-                //}
             }
-            
         }
     }
-
     if (cnt == 0) {
         return false;
     } else if (cnt == 1) {
-        if (!assign(ks, value)) return false;
+        if (!assign(kUnique, value)) return false;
     }
-
     return true;
 };
 
@@ -156,13 +154,13 @@ bool Grid::isInBoxOf(int row, int col, int k) const {
 
 // this func is to assign a value into k-square
 bool Grid::assign(int k, int value) {
-    // vector<Possible> _temp(81);
+    // std::vector<Possible> _temp(81);
     
     for (int i = 1; i <= 9; i++) {
         if (i != value) {
             // _temp = _squares;
             if (!eliminatePossibleFromSquare(k, i)) {
-                // print(cout);
+                // print(std::cout);
                 // std::cout << "Time mechane to restore to previous grid...\n" << std::endl;
                 // _squares = _temp;
                 return false;
@@ -172,7 +170,7 @@ bool Grid::assign(int k, int value) {
     return true;
 };
 
-// init a grid of 'EVERYTHING IS POSSIBLE' with assigning values from a string. 
+// init a grid of 'EVERYTHING IS POSSIBLE' and assign values from a string to it and propagate constraints. 
 void Grid::initSudoku(std::string s) {
     int k = 0;
     for (int i = 0; i < s.size(); i++) {
@@ -193,5 +191,6 @@ Grid::Grid(std::string s) : _squares(81) {
     for (int i = 0; i < 81; i++) {
         _squares[i] = Possible();
     }
+    searchingCounter = 0;
     initSudoku(s);
 };
