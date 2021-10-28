@@ -15,16 +15,15 @@ int main() {
     std::ifstream file("sudokus.txt");
     std::string sudokuStringLine;
     int sudokuCounter = 0;
-    int c = 0;
-    auto start = std::chrono::high_resolution_clock::now();
+    auto startAll = std::chrono::high_resolution_clock::now();
     while (getline(file, sudokuStringLine)) {
         sudokuCounter ++;
-        c++;//:P
-        std::cout << "                             Sudoku- " << c << std::endl;
+        std::cout << "                             Sudoku- " << sudokuCounter << std::endl;
         std::cout << "\n-------- START CONSTRAINT PROPAGATION RULE 1 AND 2 -------" << std::endl;
-        
+        auto start = std::chrono::high_resolution_clock::now();
 
-        Grid grid(sudokuStringLine);
+        Grid grid;
+        grid.loadAndPropagate(sudokuStringLine);
         grid.print(std::cout);
         std::cout << "-------- END CONSTRAINT PROPAGATION -------\n\n" << std::endl; 
 
@@ -38,13 +37,15 @@ int main() {
         grid.print(std::cout);
         std::cout << "-------- END SEARCHING-------" << std::endl;
 
-        
-    }
     auto stop = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        std::cout << sudokuCounter <<" sudokus, total time of execution: " << duration.count() << " microseconds\n\n" << std::endl;
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout <<"Time of execution: " << duration.count() << " microseconds\n\n" << std::endl;
+    
+    }
+    auto stopAll = std::chrono::high_resolution_clock::now();
+    auto durationAll = std::chrono::duration_cast<std::chrono::microseconds>(stopAll - startAll);
+    std::cout << sudokuCounter <<" sudokus, total time of execution: " << durationAll.count() << " microseconds\n\n" << std::endl;
 
     
     return 0;
-    
 }

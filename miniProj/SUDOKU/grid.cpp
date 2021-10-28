@@ -185,7 +185,7 @@ bool Grid::assign(int k, int value) {
 };
 
 // init a grid of 'EVERYTHING IS POSSIBLE' and assign values from a string to it and propagate constraints. 
-void Grid::initSudoku(std::string s) {
+void Grid::loadAndPropagate(std::string s) {
     int k = 0;
     for (int i = 0; i < s.size(); i++) {
         if (s[i] >= '1' && s[i] <= '9') {
@@ -200,11 +200,10 @@ void Grid::initSudoku(std::string s) {
     }
 };
 
-// constructor with the init function
-Grid::Grid(std::string s) : _squares(81) {
+// constructor
+Grid::Grid() : _squares(81) {
     for (int i = 0; i < 81; i++) {
         _squares[i] = Possible();
     }
     searchingCounter = 0;
-    initSudoku(s);
 };

@@ -17,7 +17,8 @@ class Grid {
 public:
     int searchingCounter;
     Possible possible(int k) const { return _squares[k]; }
-    Grid(std::string s);
+    Grid();
+    void loadAndPropagate(std::string s);
     int getIndexOfSquareWithLeastCountOfTrues() const;
     bool searching(/*std::vector<Possible> &_s*/);
     bool isSolved() const;
