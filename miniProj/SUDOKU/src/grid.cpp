@@ -29,7 +29,8 @@ bool Grid::searching() {
             if (assign(least, value)) {
                 if (searching()) 
                 {
-                    //it was a good guess as all assigning through the whole downstream return 'true' 
+                    //it was a good guess as all assigning through the whole downstream return 'true',
+                    //now it's time to return true to upstream from here
                     return true;
                 } else {
                     //bad guess, time machine #1
