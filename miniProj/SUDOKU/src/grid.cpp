@@ -1,9 +1,5 @@
 #include "grid.hpp"
 
-/********************************
-// Implementation of class 'Grid'
-********************************/
-
 // get a square index of least counts of true
 int Grid::getIndexOfSquareWithLeastCountOfTrues() const {
    int k = -1, min;
@@ -17,46 +13,38 @@ int Grid::getIndexOfSquareWithLeastCountOfTrues() const {
 };
 
 //TODO: Keep updating algorithm for better search results
-bool Grid::searching(/*std::vector<Possible> &_s*/) {
+bool Grid::searching() {
     if (isSolved()) {
         return true;
     }
     std::vector<Possible> _temp(81);
     
     int least = getIndexOfSquareWithLeastCountOfTrues();
+
     Possible p = possible(least);
 
     for (int value = 1; value <= 9; value++) {
         if (p.isTrueForValueInPossibles(value)) {
             _temp = _squares;
             if (assign(least, value)) {
-                // _temp = _squares;
                 if (searching()) 
                 {
-                    //std::cout << "Good guess!" << std::endl;
-                    //searchingCounter ++;
-                    //std::cout << "Total guesses:"<< searchingCounter << std::endl;
-                    //print(std::cout);
+                    //it was a good guess as all assigning through the whole downstream return 'true' 
                     return true;
                 } else {
-                    //std::cout << "Bad guess, time machine #1..." << std::endl;
+                    //bad guess, time machine #1
                     searchingCounter ++;
-                    //std::cout << "Total guesses:"<< searchingCounter << std::endl;
                     _squares = _temp;
-
                 }
 
             } else {
-                //std::cout << "Bad guess, time machine #2..." << std::endl;
+                //bad guess, time machine #2
                 _squares = _temp;
                 _temp = _squares;
                 if (!eliminatePossibleFromSquare(least, value)) {
-                    //std::cout << "Bad guess, time machine #3..." << std::endl;
+                    //bad guess, time machine #3
                     searchingCounter ++;
-                    //std::cout << "Total guesses:"<< searchingCounter << std::endl;
                     _squares = _temp;
-                    //std::cout << "SAME CONTRADICTION WAS REPEATED TWICE WHILE SEARCHING, ENDED UP WITH " << searchingCounter << " SEARCHES, AND RESULT:" << std::endl;
-                    //print(std::cout);
                     return false;
                 } else {
                     _temp = _squares;
@@ -64,12 +52,10 @@ bool Grid::searching(/*std::vector<Possible> &_s*/) {
             }
         }
     }
-    // std::cout << "SAME CONTRADICTION WAS REPEATED TWICE WHILE SEARCHING, ENDED UP WITH " << searchingCounter << " SEARCHES, AND RESULT:" << std::endl;
-
     return false;
 };
 
-// Sudoku is solved only when every square has one one true in its 'possible'
+// Sudoku is solved only when every square has one true in its 'possible'
 bool Grid::isSolved() const {
     for (int k = 0; k < _squares.size(); k++) {
         if (_squares[k].countTrueInPossibles() != 1) {
@@ -99,9 +85,9 @@ void Grid::print(std::ostream & s) const {
     }
 };
 
-// eliminate a value from square k and do propagation to its peers
+// eliminate a value from square k and do propagation to its peers, at same time check the box to find the unique value
 bool Grid::eliminatePossibleFromSquare (int k, int value) {
-    // if the value has already been eliminated, return true i.e. successful.
+    // if the value has already been eliminated, return true
     if (!_squares[k].isTrueForValueInPossibles(value)) {
         return true;
     }
@@ -111,8 +97,6 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
 
     const int count = _squares[k].countTrueInPossibles();
     if (count == 0) {
-        //searchingCounter ++;
-        //std::cout << "Constradiction occured when eliminate " << value <<" in row: " << (k/9) << ", col: " << (k%9) << std::endl;
         return false;
     } else if (count == 1) {// if only one possible value
 
@@ -132,7 +116,7 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
         }
     }
 
-    // Apply the 2nd rule of prapagation to put the uniq value in the unit of square k.
+    // apply the 2nd rule of propagation to put the uniq value in the unit of square k.
     // kUnique stands for the unique index to put THE value 
     int cnt = 0, kUnique;
     for (int row = 0; row < 9; row++) {
@@ -167,16 +151,10 @@ bool Grid::isInBoxOf(int row, int col, int k) const {
 };
 
 // this func is to assign a value into k-square
-bool Grid::assign(int k, int value) {
-    // std::vector<Possible> _temp(81);
-    
+bool Grid::assign(int k, int value) {    
     for (int i = 1; i <= 9; i++) {
         if (i != value) {
-            // _temp = _squares;
             if (!eliminatePossibleFromSquare(k, i)) {
-                // print(std::cout);
-                // std::cout << "Time mechane to restore to previous grid...\n" << std::endl;
-                // _squares = _temp;
                 return false;
             }
         }

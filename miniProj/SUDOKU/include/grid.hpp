@@ -7,9 +7,6 @@
 
 #include "possible.hpp"
 
-/*****************************
-// Declaration of class 'Grid'
-*****************************/
 class Grid {
 
     /*A square is 1 of 81 cells in a grid*/
@@ -20,7 +17,7 @@ public:
     Grid();
     void loadAndPropagate(std::string s);
     int getIndexOfSquareWithLeastCountOfTrues() const;
-    bool searching(/*std::vector<Possible> &_s*/);
+    bool searching();
     bool isSolved() const;
     
     void print(std::ostream & s) const;
