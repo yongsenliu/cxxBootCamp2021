@@ -78,7 +78,7 @@ void Grid::print(std::ostream & s) const {
     for (int i = 0; i < 9; i++) {
         if (i == 3 || i == 6) {
             s << str << "+-" << str << "+" << str << std::endl;
-        }
+        } 
         for (int j = 0; j < 9; j++) {
             if (j == 3 || j == 6) s << "| ";
             s << _squares[i*9 + j].getString(width);
