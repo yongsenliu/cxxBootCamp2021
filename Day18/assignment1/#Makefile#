@@ -1,0 +1,10 @@
+CC = g++
+
+shared Obj: shape.o
+	@echo -- Building shared library from $@
+	$(CC) --shared shape.so shape.o 
+
+obj: shape.cpp shape.h
+	@echo -- Generate object file from $@
+	$(CC) -c -fPIC shape.o shape.cpp shape.h
+

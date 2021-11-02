@@ -1,10 +1,13 @@
-CXX = g++
-
-libshape.so: shape.o
+CC = g++
+# Create shared object from normal object
+SHARED: shape.o
 	@echo -- Building shared library $@
-	$(CXX) --shared shape.o 
+	$(CC) --shared shape.o -o shape.so 
 
-shape.o: shape.cpp shape.h
-	@echo -- Generate object file
-	$(CXX) -c -fPIC shape.h shape.cpp
+NORMAL: shape.cpp shape.h
+	@echo -- Generate object file from $@
+	$(CC) -c -fPIC shape.cpp shape.h -o shape.o 
 
+clean:
+	@echo -- Clean unused files.
+	rm *.out *.o

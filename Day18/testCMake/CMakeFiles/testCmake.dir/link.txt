@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/testCmake.dir/source/a.cpp.o CMakeFiles/testCmake.dir/source/b.cpp.o CMakeFiles/testCmake.dir/main.cpp.o  -o testCmake 
