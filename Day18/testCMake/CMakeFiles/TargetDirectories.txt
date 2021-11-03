@@ -1,0 +1,3 @@
+/home/sam/GitRepo/Projects/Day18/testCMake/CMakeFiles/rebuild_cache.dir
+/home/sam/GitRepo/Projects/Day18/testCMake/CMakeFiles/edit_cache.dir
+/home/sam/GitRepo/Projects/Day18/testCMake/CMakeFiles/testCmake.dir
