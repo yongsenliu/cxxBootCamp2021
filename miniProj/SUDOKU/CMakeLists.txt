@@ -9,4 +9,3 @@ include_directories(include)
 
 # Add executable, i.e. .cpp files
 add_executable(SudokuSolver main.cpp src/possible.cpp src/grid.cpp)
-
