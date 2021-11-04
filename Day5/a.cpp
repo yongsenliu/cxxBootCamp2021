@@ -4,17 +4,17 @@
 using namespace std;
 
 // create interface for shapes
-class ShapeInterface {
-    public:
-    virtual void setValues(int, int) = 0;
-    virtual int area() = 0;
-    virtual bool isEqual() = 0;
-    virtual bool isGreater() = 0;
-    virtual bool isSmaller() = 0;
-};
+// class ShapeInterface {
+//     public:
+//     virtual void setValues(int, int) = 0;
+//     virtual int area() = 0;
+//     virtual bool isEqual() = 0;
+//     virtual bool isGreater() = 0;
+//     virtual bool isSmaller() = 0;
+// };
 
 // create base class for shapes which comply the interface
-class Shape: public ShapeInterface {
+class Shape {
     protected:
         int x, y;
 
