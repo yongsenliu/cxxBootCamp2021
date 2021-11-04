@@ -12,7 +12,7 @@
 
 int main() {
 
-    std::ifstream file("data/sudokus.txt");
+    std::ifstream file("../data/sudokus.txt");
     std::string sudokuStringLine;
     int sudokuCounter = 0;
     auto startAll = std::chrono::high_resolution_clock::now();
