@@ -1,3 +1,0 @@
-/home/sam/GitRepo/Projects/miniProj/SUDOKU/build/CMakeFiles/rebuild_cache.dir
-/home/sam/GitRepo/Projects/miniProj/SUDOKU/build/CMakeFiles/edit_cache.dir
-/home/sam/GitRepo/Projects/miniProj/SUDOKU/build/CMakeFiles/SudokuSolver.dir

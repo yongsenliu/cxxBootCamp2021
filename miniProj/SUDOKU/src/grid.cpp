@@ -106,6 +106,7 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
         int v = _squares[k].valueOfFirstTrueInPossibles();
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
+
                 // k%9 is the col and k/9 is the row for the square
                 if ((col == k % 9)||(row == k / 9) || isInBoxOf(row, col, k)) {
                     if (!((9*row+col) == k)) {
@@ -118,8 +119,8 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
         }
     }
 
-    // apply the 2nd rule of propagation to put the uniq value in the unit of square k.
-    // kUnique stands for the unique index to put THE value 
+    // apply the 2nd rule of propagation to assign the unique value of the box of square k if possible.
+    // kUnique stands for the index to be assigned the unique value 
     int cnt = 0, kUnique;
     for (int row = 0; row < 9; row++) {
         for (int col = 0; col < 9; col++) {
@@ -138,7 +139,7 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
     return true;
 };
 
-// this func is to find out if a combination of row&col are in the Box of a square
+// this func is to find out if a combination of row&col is in the Box of a square
 // thus peers in the Box can be found out for it
 bool Grid::isInBoxOf(int row, int col, int k) const {
 
@@ -152,7 +153,7 @@ bool Grid::isInBoxOf(int row, int col, int k) const {
     return false;
 };
 
-// this func is to assign a value into k-square
+// this func is to assign a value into square k
 bool Grid::assign(int k, int value) {    
     for (int i = 1; i <= 9; i++) {
         if (i != value) {
