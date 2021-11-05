@@ -107,7 +107,7 @@ bool Grid::eliminatePossibleFromSquare (int k, int value) {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
 
-                // k%9 is the col and k/9 is the row for the square
+                // k%9 is the col and k/9 is the row for the square, a square's Box is a 3x3 sub-grid
                 if ((col == k % 9)||(row == k / 9) || isInBoxOf(row, col, k)) {
                     if (!((9*row+col) == k)) {
                         if (!eliminatePossibleFromSquare(9*row+col, v)) {
@@ -165,7 +165,7 @@ bool Grid::assign(int k, int value) {
     return true;
 };
 
-// init a grid of 'EVERYTHING IS POSSIBLE' and assign values from a string to it and propagate constraints. 
+// assign values from a string to grid and propagate constraints. 
 void Grid::loadAndPropagate(std::string s) {
     int k = 0;
     for (int i = 0; i < s.size(); i++) {
@@ -181,10 +181,7 @@ void Grid::loadAndPropagate(std::string s) {
     }
 };
 
-// constructor
+// constructor. init a grid of 'EVERYTHING IS POSSIBLE' 
 Grid::Grid() : _squares(81) {
-    for (int i = 0; i < 81; i++) {
-        _squares[i] = Possible();
-    }
     searchingCounter = 0;
 };
